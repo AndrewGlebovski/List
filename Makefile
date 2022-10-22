@@ -15,10 +15,10 @@ all: run
 
 
 # Завершает сборку
-run: $(addprefix $(BIN_DIR)/, main.o)
+run: $(addprefix $(BIN_DIR)/, main.o list.o)
 	$(COMPILER) $^ -o run.exe
 
 
 # Предварительная сборка
-$(BIN_DIR)/%.o: $(addprefix $(SRC_DIR)/, %.cpp)
+$(BIN_DIR)/%.o: $(addprefix $(SRC_DIR)/, %.cpp list.hpp)
 	$(COMPILER) $(FLAGS) -c $< -o $@

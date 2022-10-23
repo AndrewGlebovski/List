@@ -10,6 +10,9 @@ if (!(condition)) {                     \
 }
 
 
+int get_free_node(List *list);
+
+
 int construct(List *list, size_t size) {
     ASSERT(list, "Invalid list pointer!");
     ASSERT(size > 0, "Invalid list size!");
@@ -50,10 +53,74 @@ int resize(List *list, size_t new_size) {
 }
 
 
-int insert(List *list, int index, int value);
+int insert(List *list, int index, int value) {
+    /*
+    ASSERT(list, "Invalid list pointer!");
+    ASSERT(list -> buffer, "Invalid list buffer!");
+    ASSERT(index > 0, "Invalid index!");
+    */
+
+    int free = get_free_node(list);
+
+    list -> buffer[free] = {value, list -> buffer[index].next, index};
+    list -> buffer[index].next = free;
+
+    return 0;
+}
 
 
-int remove(List *list, int index);
+int remove(List *list, int index) {
+    /*
+    ASSERT(list, "Invalid list pointer!");
+    ASSERT(list -> buffer, "Invalid list buffer!");
+    ASSERT(index > 0, "Invalid index!");
+    */
+
+    int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
+
+    list -> buffer[prev].next = next;
+    list -> buffer[next].prev = prev;
+
+    list -> buffer[index] = {0xBEEF, -1, -1};
+
+    return 0;
+}
+
+
+int push_back(List *list, int value) {
+    /*
+    ASSERT(list, "Invalid list pointer!");
+    ASSERT(list -> buffer, "Invalid list buffer!");
+    */
+
+    int free = get_free_node(list);
+
+    list -> buffer[list -> tail].next = free;
+
+    list -> buffer[free] = {value, 0, list -> tail};
+
+    list -> tail = free;
+
+    return 0;
+}
+
+
+int push_front(List *list, int value) {
+    /*
+    ASSERT(list, "Invalid list pointer!");
+    ASSERT(list -> buffer, "Invalid list buffer!");
+    */
+
+    int free = get_free_node(list);
+
+    list -> buffer[list -> head].prev = free;
+
+    list -> buffer[free] = {value, list -> head, 0};
+
+    list -> head = free;
+
+    return 0;
+}
 
 
 int destruct(List *list) {
@@ -92,4 +159,15 @@ int dump(List *list) {
     putchar('\n');
 
     return 0;
+}
+
+
+int get_free_node(List *list) {
+    for(size_t i = 1; i < list -> size; i++) 
+        if (list -> buffer[i].next == -1) return (int) i;
+
+    if (!resize(list, list -> size * 2))
+        return (int) list -> size / 2;
+    
+    return -1;
 }

@@ -20,6 +20,18 @@ int construct(List *list, size_t size);
 int resize(List *list, size_t new_size);
 
 
+int insert(List *list, int index, int value);
+
+
+int remove(List *list, int index);
+
+
+int push_back(List *list, int value);
+
+
+int push_front(List *list, int value);
+
+
 int destruct(List *list);
 
 

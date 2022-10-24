@@ -28,8 +28,8 @@ int construct(List *list, size_t size) {
     for(size_t i = 1; i < size; i++)
         list -> buffer[i] = {0xBEEF, -1, -1};
 
-    list -> head = 1;
-    list -> tail = 1;
+    list -> head = 0;
+    list -> tail = 0;
 
     return 0;
 }
@@ -62,10 +62,31 @@ int insert(List *list, int index, int value) {
 
     int free = get_free_node(list);
 
-    list -> buffer[free] = {value, list -> buffer[index].next, index};
-    list -> buffer[index].next = free;
+    if (list -> tail == 0 && list -> head == 0) {
+        list -> buffer[free] = {value, 0, 0};
+        list -> head = free;
+        list -> tail = free;
+    }
+    
+    else if (index >= list -> tail) {
+        list -> buffer[list -> tail].next = free;
+        list -> buffer[free] = {value, 0, list -> tail};
+        list -> tail = free;
+    }
 
-    return 0;
+    else if (index < list -> head) {
+        list -> buffer[list -> head].prev = free;
+        list -> buffer[free] = {value, list -> head, 0};
+        list -> head = free;
+    }
+
+    else {
+        list -> buffer[free] = {value, list -> buffer[index].next, index};
+        list -> buffer[list -> buffer[index].next].prev = free;
+        list -> buffer[index].next = free;
+    }
+
+    return free;
 }
 
 
@@ -82,42 +103,6 @@ int remove(List *list, int index) {
     list -> buffer[next].prev = prev;
 
     list -> buffer[index] = {0xBEEF, -1, -1};
-
-    return 0;
-}
-
-
-int push_back(List *list, int value) {
-    /*
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer!");
-    */
-
-    int free = get_free_node(list);
-
-    list -> buffer[list -> tail].next = free;
-
-    list -> buffer[free] = {value, 0, list -> tail};
-
-    list -> tail = free;
-
-    return 0;
-}
-
-
-int push_front(List *list, int value) {
-    /*
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer!");
-    */
-
-    int free = get_free_node(list);
-
-    list -> buffer[list -> head].prev = free;
-
-    list -> buffer[free] = {value, list -> head, 0};
-
-    list -> head = free;
 
     return 0;
 }

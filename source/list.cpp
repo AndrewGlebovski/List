@@ -97,12 +97,30 @@ int remove(List *list, int index) {
     ASSERT(index > 0, "Invalid index!");
     */
 
-    int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
+    if (list -> tail == 0 && list -> head == 0) {
+        return 1;
+    }
 
-    list -> buffer[prev].next = next;
-    list -> buffer[next].prev = prev;
+    else if (index == 0 || list -> buffer[index].prev == -1) {
+        return 1;
+    }
 
-    list -> buffer[index] = {0xBEEF, -1, -1};
+    else if (index == list -> head) {
+        list -> buffer[list -> buffer[index].next].prev = 0;
+        list -> buffer[index] = {0xBEEF, -1, -1};
+    }
+
+    else if (index == list -> tail) {
+        list -> buffer[list -> buffer[index].prev].next = 0;
+        list -> buffer[index] = {0xBEEF, -1, -1};
+    }
+
+    else {
+        int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
+        list -> buffer[prev].next = next;
+        list -> buffer[next].prev = prev;
+        list -> buffer[index] = {0xBEEF, -1, -1};
+    }
 
     return 0;
 }

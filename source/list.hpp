@@ -10,6 +10,7 @@ typedef struct {
     Node *buffer = nullptr;
     int head = 0;
     int tail = 0;
+    int free = 0;
     size_t size = 0;
 } List;
 

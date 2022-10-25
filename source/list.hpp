@@ -12,6 +12,7 @@ typedef struct {
     int tail = 0;
     int free = 0;
     size_t size = 0;
+    int linear = 1;
 } List;
 
 
@@ -37,3 +38,6 @@ int verifier(List *list);
 
 
 int linearization(List *list);
+
+
+int real_index(List *list, int logical_index);

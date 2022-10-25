@@ -81,12 +81,16 @@ int insert(List *list, int index, int value) {
         list -> buffer[list -> head].prev = real_index;
         list -> buffer[real_index] = {value, list -> head, 0};
         list -> head = real_index;
+
+        list -> linear = 0;
     }
 
     else {
         list -> buffer[real_index] = {value, list -> buffer[index].next, index};
         list -> buffer[list -> buffer[index].next].prev = real_index;
         list -> buffer[index].next = real_index;
+
+        list -> linear = 0;
     }
 
     return real_index;
@@ -112,19 +116,25 @@ int remove(List *list, int index) {
         list -> head = list -> buffer[index].next;
         list -> buffer[list -> buffer[index].next].prev = 0;
         list -> buffer[index] = {0xBEEF, list -> free, -1};
+
+        list -> linear = 0;
     }
 
     else if (index == list -> tail) {
         list -> tail = list -> buffer[index].prev;
+
         list -> buffer[list -> buffer[index].prev].next = 0;
         list -> buffer[index] = {0xBEEF, list -> free, -1};
     }
 
     else {
         int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
+
         list -> buffer[prev].next = next;
         list -> buffer[next].prev = prev;
         list -> buffer[index] = {0xBEEF, list -> free, -1};
+
+        list -> linear = 0;
     }
 
     list -> free = index;
@@ -142,6 +152,7 @@ int destruct(List *list) {
 
     list -> head = 0;
     list -> tail = 0;
+    list -> free = 0;
 
     return 0;
 }
@@ -211,10 +222,8 @@ int linearization(List *list) {
 
     int linear_index = 1;
 
-    for(int i = list -> head; i != 0; i = list -> buffer[i].next, linear_index++) {
-        printf("%i\n", i);
+    for(int i = list -> head; i != 0; i = list -> buffer[i].next, linear_index++)
         linear_buffer[linear_index] = {list -> buffer[i].data, linear_index + 1, linear_index - 1};
-    }
     
     for(int i = linear_index; i < (int) list -> size; i++)
         linear_buffer[i] = {0xBEEF, i + 1, -1};
@@ -229,5 +238,25 @@ int linearization(List *list) {
 
     list -> buffer[list -> tail].next = 0;
 
+    list -> linear = 1;
+
     return 0;
+}
+
+
+int real_index(List *list, int logical_index) {
+    if (logical_index == 0) {
+        return 0;
+    }
+    else if (list -> linear) {
+        return logical_index;
+    }
+    else {
+        int real_id = list -> head;
+
+        for(int j = 1; j < logical_index; j++)
+            real_id = list -> buffer[real_id].next;
+
+        return real_id;
+    }
 }

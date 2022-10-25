@@ -31,3 +31,6 @@ int destruct(List *list);
 
 
 int dump(List *list);
+
+
+int verifier(List *list);

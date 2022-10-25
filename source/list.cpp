@@ -172,3 +172,35 @@ int dump(List *list) {
 
     return 0;
 }
+
+
+int verifier(List *list) {
+    ASSERT(list, "Invalid list pointer!");
+
+    ASSERT(list -> buffer, "List has invalid buffer!");
+
+    int id = 0;
+    size_t count = 0;
+
+    for(int i = list -> head; i != 0 && count <= list -> size; i = list -> buffer[i].next, count++) {
+        if (i != list -> head)
+            ASSERT(list -> buffer[list -> buffer[i].prev].next == i, "Wrong prev index!");
+
+        if (i != list -> tail)
+            ASSERT(list -> buffer[list -> buffer[i].next].prev == i, "Wrong next index!");
+        
+        id = i;
+    }
+
+    ASSERT(id == list -> tail, "Zero index found before tail!");
+
+    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!");
+
+    for(int i = list -> free; i != (int) list -> size; i = list -> buffer[i].next) {
+        ASSERT(i != 0, "Zero index in free element found!");
+
+        ASSERT(list -> buffer[i].prev == -1, "Free element prev index is not -1!");
+    }
+
+    return 0;
+}

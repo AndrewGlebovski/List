@@ -7,6 +7,8 @@ int main() {
 
     construct(&list, 16);
 
+    verifier(&list);
+
     dump(&list);
 
     destruct(&list);

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "list.hpp"
+#include "graph.hpp"
 
 
 int main() {

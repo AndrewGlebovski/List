@@ -204,3 +204,30 @@ int verifier(List *list) {
 
     return 0;
 }
+
+
+int linearization(List *list) {
+    Node *linear_buffer = (Node *) calloc(list -> size, sizeof(Node));
+
+    int linear_index = 1;
+
+    for(int i = list -> head; i != 0; i = list -> buffer[i].next, linear_index++) {
+        printf("%i\n", i);
+        linear_buffer[linear_index] = {list -> buffer[i].data, linear_index + 1, linear_index - 1};
+    }
+    
+    for(int i = linear_index; i < (int) list -> size; i++)
+        linear_buffer[i] = {0xBEEF, i + 1, -1};
+    
+    free(list -> buffer);
+
+    list -> buffer = linear_buffer;
+
+    list -> head = 1;
+    list -> tail = linear_index - 1;
+    list -> free = linear_index;
+
+    list -> buffer[list -> tail].next = 0;
+
+    return 0;
+}

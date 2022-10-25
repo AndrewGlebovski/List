@@ -34,3 +34,6 @@ int dump(List *list);
 
 
 int verifier(List *list);
+
+
+int linearization(List *list);

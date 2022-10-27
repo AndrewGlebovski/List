@@ -1,18 +1,27 @@
+/**
+ * \file
+ * \brief Graphical dump module source
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.hpp"
 #include "graph.hpp"
 
 
+/// Writes structs associated with Nodes by following the logical order
 void write_records(List *list, FILE *file, int from, int to);
 
 
+/// Writes index ranks
 void write_ranks(FILE *file, size_t count);
 
 
+/// Writes edge connecting Nodes 
 void write_edges(List *list, FILE *file, int from, int to);
 
 
+/// Writes hidden edges connecting Nodes to keep them in row
 void write_hidden_edges(List *list, FILE *file);
 
 

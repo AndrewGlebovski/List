@@ -20,7 +20,9 @@ void write_hidden_edges(List *list, FILE *file);
 
 int generate_file(List *list, FILE *file) {
     fprintf(file, "digraph G {\n");
-    fprintf(file, "rankdir = LR\n");
+    fprintf(file, "rankdir=LR\n");
+    fprintf(file, "splines=ortho\n");
+    fprintf(file, "nodesep=1\n");
 
     write_ranks(file, list -> size);
 
@@ -75,10 +77,10 @@ void write_records(List *list, FILE *file, int from, int to) {
 
 void write_edges(List *list, FILE *file, int from, int to) {
     for(int j = from; j != to; j = list -> buffer[j].next) {
-        fprintf(file, "\"e%i\":next -> \"e%i\":index;\n", j, list -> buffer[j].next);
+        fprintf(file, "\"e%i\" -> \"e%i\";\n", j, list -> buffer[j].next);
 
         if (list -> buffer[j].prev > -1)
-            fprintf(file, "\"e%i\":prev -> \"e%i\":index;\n", j, list -> buffer[j].prev);
+            fprintf(file, "\"e%i\" -> \"e%i\";\n", j, list -> buffer[j].prev);
     }
 }
 
@@ -95,6 +97,21 @@ void write_hidden_edges(List *list, FILE *file) {
 }
 
 
-int generate_image() {
-    return system("dot graph.txt -Tpng -O");
+int generate_image(const char *input, const char *output) {
+    char cmd[20 + 2 * _MAX_PATH] = "";
+
+    sprintf(cmd, "dot %s -o %s -Tpng", input, output);
+    
+    return system(cmd);
+}
+
+
+int show_image(const char *filepath) {
+    char cmd[10 + _MAX_PATH] = "";
+
+    sprintf(cmd, "start %s", filepath);
+
+    system(cmd);
+
+    return system("pause");
 }

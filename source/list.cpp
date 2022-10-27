@@ -1,8 +1,15 @@
+/**
+ * \file
+ * \brief List module source
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.hpp"
 
 
+
+/// Returns 1 and prints message on condition fail
 #define ASSERT(condition, message)      \
 if (!(condition)) {                     \
     printf("%s\n", message);            \
@@ -52,11 +59,8 @@ int resize(List *list, size_t new_size) {
 
 
 int insert(List *list, int index, int value) {
-    /*
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer!");
-    ASSERT(index > 0, "Invalid index!");
-    */
+    ASSERT(!verifier(list), "Can't insert element to invalid list");
+    ASSERT(index > -1, "Wrong index given!");
 
     int real_index = list -> free;
 
@@ -98,11 +102,7 @@ int insert(List *list, int index, int value) {
 
 
 int remove(List *list, int index) {
-    /*
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer!");
-    ASSERT(index > 0, "Invalid index!");
-    */
+    ASSERT(!verifier(list), "Can't remove element due to invalid list");
 
     if (list -> tail == 0 && list -> head == 0) {
         return 1;
@@ -144,8 +144,7 @@ int remove(List *list, int index) {
 
 
 int destruct(List *list) {
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer pointer!");
+    ASSERT(!verifier(list), "Can't destruct list due to invalid list");
 
     free(list -> buffer);
     list -> buffer = nullptr;
@@ -159,8 +158,7 @@ int destruct(List *list) {
 
 
 int dump(List *list) {
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(list -> buffer, "Invalid list buffer pointer!");
+    ASSERT(!verifier(list), "Can't dump list due to invalid list");
 
     printf("head - %i\ntail - %i\nfree - %i\n", list -> head, list -> tail, list -> free);
 
@@ -218,6 +216,8 @@ int verifier(List *list) {
 
 
 int linearization(List *list) {
+    ASSERT(!verifier(list), "Can't linearize list due to invalid list");
+
     Node *linear_buffer = (Node *) calloc(list -> size, sizeof(Node));
 
     int linear_index = 1;
@@ -245,6 +245,8 @@ int linearization(List *list) {
 
 
 int real_index(List *list, int logical_index) {
+    ASSERT(!verifier, "Can't get real index due to invalid list");
+
     if (logical_index == 0) {
         return 0;
     }

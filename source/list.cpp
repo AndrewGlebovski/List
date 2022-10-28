@@ -13,7 +13,7 @@
 #define ASSERT(condition, message, error, ...)                                                      \
 if (!(condition)) {                                                                                 \
     printf("%s(%i) in %s\n[%i] %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, error, message);     \
-    dump(list);                                                                                     \
+    dump(list, stdout);                                                                                     \
     __VA_ARGS__;                                                                                    \
     return error;                                                                                   \
 }
@@ -29,7 +29,7 @@ if (!(condition)) {                                                             
 /// Dumps information about list
 #define DUMP(list, ...)                                                             \
 printf("%s(%i) in %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);                  \
-dump(list);                                                                         \
+dump(list, stdout);                                                                         \
 __VA_ARGS__;
 
 
@@ -149,37 +149,37 @@ int destruct(List *list) {
 }
 
 
-int dump(List *list) {
+int dump(List *list, FILE *output) {
     int error = verifier(list);
 
     if (error == INVALID_ARG) return INVALID_ARG;
 
-    printf("List [%p]\n", list);
+    fprintf(output, "List [%p]\n", list);
 
-    printf("buffer [%p]:\n", list -> buffer);
-    printf("size - %i\n", list -> size);
+    fprintf(output, "buffer [%p]:\n", list -> buffer);
+    fprintf(output, "size - %i\n", list -> size);
 
     if (error) return INVALID_ARG;
 
-    printf("head - %i\n", list -> buffer[0].next);
-    printf("tail - %i\n", list -> buffer[0].prev);
-    printf("free - %i\n", list -> free);
+    fprintf(output, "head - %i\n", list -> buffer[0].next);
+    fprintf(output, "tail - %i\n", list -> buffer[0].prev);
+    fprintf(output, "free - %i\n", list -> free);
 
-    printf("id    ");
+    fprintf(output, "id    ");
     for(int i = 0; i < list -> size; i++)
-        printf("%-8i ", i);
+        fprintf(output, "%-8i ", i);
     
-    printf("\ndata  ");
+    fprintf(output, "\ndata  ");
     for(int i = 0; i < list -> size; i++)
-        printf("%-8i ", list -> buffer[i].data);
+        fprintf(output, "%-8i ", list -> buffer[i].data);
     
-    printf("\nnext  ");
+    fprintf(output, "\nnext  ");
     for(int i = 0; i < list -> size; i++)
-        printf("%-8i ", list -> buffer[i].next);
+        fprintf(output, "%-8i ", list -> buffer[i].next);
     
-    printf("\nprev  ");
+    fprintf(output, "\nprev  ");
     for(int i = 0; i < list -> size; i++)
-        printf("%-8i ", list -> buffer[i].prev);
+        fprintf(output, "%-8i ", list -> buffer[i].prev);
     putchar('\n');
 
     return 0;

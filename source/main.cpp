@@ -35,7 +35,7 @@ int main() {
 
     generate_image("dump/graph.txt", "dump/graph.png");
 
-    dump(&list);
+    dump(&list, stdout);
 
     destruct(&list);
 

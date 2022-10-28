@@ -85,9 +85,10 @@ int destruct(List *list);
 /**
  * \brief Prints list info
  * \param [in] list Allocated list
+ * \param [in] output Output file 
  * \return Non zero value means error
 */
-int dump(List *list);
+int dump(List *list, FILE * output);
 
 
 /**

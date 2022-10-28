@@ -11,6 +11,8 @@ int main() {
 
     construct(&list, 16);
 
+    construct(nullptr, 16);
+
     FILE *file = fopen(DUMP_DIR"graph.txt", "w");
 
     for(int i = 0; i < 12; i++)
@@ -22,6 +24,8 @@ int main() {
     remove(&list, 5);
     remove(&list, 8);
     remove(&list, 9);
+
+    linearization(&list);
 
     verifier(&list);
 

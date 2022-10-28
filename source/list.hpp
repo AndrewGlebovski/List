@@ -15,6 +15,7 @@ typedef enum {
     ALLOC_FAIL   =  8,       ///< Failed to allocate memory
     REALLOC_FAIL =  9,       ///< Failed to reallocate memory
     INV_FREE     = 10,       ///< Free element has prev = -1
+    SECOND_CHECK = 11,       ///< Function second returns error
 } ERROR_CODES;
 
 

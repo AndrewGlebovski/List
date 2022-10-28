@@ -9,12 +9,28 @@
 
 
 
-/// Returns 1 and prints message on condition fail
-#define ASSERT(condition, message, error)                                                           \
+/// Returns error and prints message on condition fail
+#define ASSERT(condition, message, error, ...)                                                      \
 if (!(condition)) {                                                                                 \
     printf("%s(%i) in %s\n[%i] %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, error, message);     \
+    dump(list);                                                                                     \
+    __VA_ARGS__;                                                                                    \
     return error;                                                                                   \
 }
+
+
+/// Returns error on condition fail
+#define SIMPLE_ASSERT(condition, message, error, ...)                                               \
+if (!(condition)) {                                                                                 \
+    return error;                                                                                   \
+}
+
+
+/// Dumps information about list
+#define DUMP(list, ...)                                                             \
+printf("%s(%i) in %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);                  \
+dump(list);                                                                         \
+__VA_ARGS__;
 
 
 int construct(List *list, int size) {
@@ -34,6 +50,8 @@ int construct(List *list, int size) {
 
     list -> free = 1;
 
+    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
     return 0;
 }
 
@@ -51,6 +69,8 @@ int resize(List *list, int new_size) {
         list -> buffer[i] = {0xBEEF, i + 1, -1};
 
     list -> size = new_size;
+
+    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
 
     return 0;
 }
@@ -71,6 +91,8 @@ int insert(List *list, int index, int value) {
 
     list -> linear = 0;
 
+    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
     return real_index;
 }
 
@@ -89,6 +111,8 @@ int remove(List *list, int index) {
 
     list -> free = index;
 
+    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
     return 0;
 }
 
@@ -106,8 +130,19 @@ int destruct(List *list) {
 
 
 int dump(List *list) {
-    ASSERT(!verifier(list), "Can't dump list due to verification fail", INVALID_ARG);
+    int error = verifier(list);
 
+    if (error == INVALID_ARG) return INVALID_ARG;
+
+    printf("List [%p]\n", list);
+
+    printf("buffer [%p]:\n", list -> buffer);
+    printf("size - %i\n", list -> size);
+
+    if (error) return INVALID_ARG;
+
+    printf("head - %i\n", list -> buffer[0].next);
+    printf("tail - %i\n", list -> buffer[0].prev);
     printf("free - %i\n", list -> free);
 
     printf("id    ");
@@ -132,30 +167,30 @@ int dump(List *list) {
 
 
 int verifier(List *list) {
-    ASSERT(list, "Invalid list pointer!", INVALID_ARG);
+    SIMPLE_ASSERT(list, "Invalid list pointer!", INVALID_ARG);
 
-    ASSERT(list -> buffer, "List has invalid buffer!", NULL_BUFFER);
+    SIMPLE_ASSERT(list -> buffer, "List has invalid buffer!", NULL_BUFFER);
 
     int id = 0, count = 0;
 
     for(int i = list -> buffer[0].next; i != 0 && count <= list -> size; i = list -> buffer[i].next, count++) {
-        ASSERT(list -> buffer[list -> buffer[i].prev].next == i, "Wrong prev index!", INV_NEXT_ID);
-        ASSERT(list -> buffer[list -> buffer[i].next].prev == i, "Wrong next index!", INV_PREV_ID);
+        SIMPLE_ASSERT(list -> buffer[list -> buffer[i].prev].next == i, "Wrong prev index!", INV_NEXT_ID);
+        SIMPLE_ASSERT(list -> buffer[list -> buffer[i].next].prev == i, "Wrong next index!", INV_PREV_ID);
         
         id = i;
     }
 
-    ASSERT(id == list -> buffer[0].prev, "Iteration ended before head was reached!", ITER_FAIL);
+    SIMPLE_ASSERT(id == list -> buffer[0].prev, "Iteration ended before head was reached!", ITER_FAIL);
 
-    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
+    SIMPLE_ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
 
     count = 0;
 
     for(int i = list -> free; i != list -> size && count <= list -> size; i = list -> buffer[i].next, count++) {
-        ASSERT(list -> buffer[i].prev == -1, "Free element prev index is not -1!", INV_FREE);
+        SIMPLE_ASSERT(list -> buffer[i].prev == -1, "Free element prev index is not -1!", INV_FREE);
     }
 
-    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
+    SIMPLE_ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
 
     return 0;
 }
@@ -185,6 +220,8 @@ int linearization(List *list) {
     list -> buffer[linear_index - 1].next = 0;
 
     list -> linear = 1;
+
+    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
 
     return 0;
 }

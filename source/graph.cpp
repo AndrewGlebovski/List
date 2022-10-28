@@ -10,7 +10,7 @@
 
 
 /// Writes structs associated with Nodes by following the logical order
-void write_records(List *list, FILE *file, int from, int to);
+void write_records(List *list, FILE *file, int from, int to, const char *fillcolor);
 
 
 /// Writes index ranks
@@ -43,14 +43,14 @@ int generate_file(List *list, FILE *file) {
     fprintf(file, "    \"e%i\"[label = \"Size = 16\"];\n", list -> size);
     fprintf(file, "}\n");
 
-    write_records(list, file, list -> buffer[0].next, 0);
-    write_records(list, file, 0, list -> buffer[0].next);
+    write_records(list, file, list -> buffer[0].next, 0, "daf9f4");
+    write_records(list, file, 0, list -> buffer[0].next, "daf9f4");
 
-    write_records(list, file, list -> free, list -> size);
+    write_records(list, file, list -> free, list -> size, "02e5ca");
 
     write_hidden_edges(list, file);
 
-    fprintf(file, "edge[color=\"#02e5ca\"];\n");
+    fprintf(file, "edge[color=\"#019aa2\"];\n");
 
     for(int i = 0; i < list -> size; i++)
         fprintf(file, "{ rank = same; \"%i\"; \"e%i\";}\n", i, i);
@@ -85,10 +85,10 @@ void write_ranks(FILE *file, int count) {
 }
 
 
-void write_records(List *list, FILE *file, int from, int to) {
+void write_records(List *list, FILE *file, int from, int to, const char *fillcolor) {
     fprintf(file, "{\n");
 
-    fprintf(file, "    node[shape=record, color=\"#355250\", fontsize=14, fontcolor=\"#355250\", style=\"filled\", fillcolor=\"#daf9f4\"];\n");
+    fprintf(file, "    node[shape=record, color=\"#355250\", fontsize=14, fontcolor=\"#355250\", style=\"filled\", fillcolor=\"#%s\"];\n", fillcolor);
 
     for(int j = from; j != to; j = list -> buffer[j].next)
         fprintf(file, "    \"e%i\"[label=\"<index> %i | %i |  {<prev> %i | <next> %i}\"];\n", j, j, list -> buffer[j].data, list -> buffer[j].prev, list -> buffer[j].next);

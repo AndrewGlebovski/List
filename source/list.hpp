@@ -113,3 +113,37 @@ int linearization(List *list);
  * \return Real index in buffer
 */
 int real_index(List *list, int logical_index);
+
+
+/**
+ * \brief Pushes value to list front
+ * \param [out] list Allocated list
+ * \param [in]  value New element will store this value
+ * \return Real index of new element in buffer. Please, store it to improve perfomance of your program
+*/
+[[nodiscard]] int push_front(List *list, int value);
+
+
+/**
+ * \brief Pushes value to list back
+ * \param [out] list Allocated list
+ * \param [in]  value New element will store this value
+ * \return Real index of new element in buffer. Please, store it to improve perfomance of your program
+*/
+[[nodiscard]] int push_back(List *list, int value);
+
+
+/**
+ * \brief Removes front element from list
+ * \param [out] list Allocated list
+ * \return Non zero value means error
+*/
+int pop_front(List *list);
+
+
+/**
+ * \brief Removes back element from list
+ * \param [out] list Allocated list
+ * \return Non zero value means error
+*/
+int pop_back(List *list, int value);

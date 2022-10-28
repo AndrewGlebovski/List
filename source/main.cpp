@@ -16,7 +16,7 @@ int main() {
     FILE *file = fopen(DUMP_DIR"graph.txt", "w");
 
     for(int i = 0; i < 12; i++)
-        insert(&list, i, i + 2);
+        push_back(&list, i + 2);
 
     insert(&list, 0, 50);
     insert(&list, 12, 150);

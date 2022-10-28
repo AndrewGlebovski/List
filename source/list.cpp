@@ -77,9 +77,9 @@ int resize(List *list, int new_size) {
 
 
 int insert(List *list, int index, int value) {
-    ASSERT(!verifier(list), "Can't insert element to verification fail", INVALID_ARG);
-    ASSERT(index > -1 && index < list -> size, "Wrong index given!", INVALID_ARG);
-    ASSERT(list -> buffer[index].prev != -1, "Insert after not existing element!", INVALID_ARG);
+    ASSERT(!verifier(list), "Can't insert element due to verification fail", -INVALID_ARG);
+    ASSERT(index > -1 && index < list -> size, "Wrong index given!", -INVALID_ARG);
+    ASSERT(list -> buffer[index].prev != -1, "Insert after not existing element!", -INVALID_ARG);
 
     int real_index = list -> free;
 
@@ -91,15 +91,25 @@ int insert(List *list, int index, int value) {
 
     list -> linear = 0;
 
-    ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+    ASSERT(!verifier(list), "Second verification return error", -SECOND_CHECK);
 
     return real_index;
 }
 
 
+int push_front(List *list, int value) {
+    return insert(list, 0, value);
+}
+
+
+int push_back(List *list, int value) {
+    return insert(list, list -> buffer[0].prev, value);
+}
+
+
 int remove(List *list, int index) {
     ASSERT(!verifier(list), "Can't remove element due to verification fail", INVALID_ARG);
-    ASSERT(index > -1 && index < list -> size, "Wrong index given!", INVALID_ARG);
+    ASSERT(index > 0 && index < list -> size, "Wrong index given!", INVALID_ARG);
     ASSERT(list -> buffer[index].prev != -1, "Remove already free element!", INVALID_ARG);
 
     int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
@@ -114,6 +124,16 @@ int remove(List *list, int index) {
     ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
 
     return 0;
+}
+
+
+int pop_front(List *list) {
+    return remove(list, 0);
+}
+
+
+int pop_back(List *list, int value) {
+    return remove(list, list -> buffer[0].prev);
 }
 
 

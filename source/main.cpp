@@ -15,7 +15,14 @@ int main() {
 
     FILE *file = fopen(DUMP_DIR"graph.txt", "w");
 
+    for(int i = 0; i < 12; i++)
+        insert(&list, i, i + 2);
+
     generate_file(&list, file);
+
+    fclose(file);
+
+    generate_image("dump/graph.txt", "dump/graph.png");
 
     dump(&list);
 

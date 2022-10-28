@@ -35,13 +35,22 @@ int generate_file(List *list, FILE *file) {
 
     write_ranks(file, list -> size);
 
+    fprintf(file, "{\n");
+    fprintf(file, "    node[color=\"#355250\", fontcolor=\"#355250\", fontsize=14, shape=\"invhouse\", style=\"filled\", fillcolor=\"#daf9f4\"];\n");
+    fprintf(file, "    \"head\";\n");
+    fprintf(file, "    \"tail\";\n");
+    fprintf(file, "    \"free\";\n");
+    fprintf(file, "    \"e0\";\n");
+    fprintf(file, "    \"e%llu\";\n", list -> size);
+    fprintf(file, "}\n");
+
     write_records(list, file, list -> head, 0);
 
     write_records(list, file, list -> free, (int) list -> size);
 
     write_hidden_edges(list, file);
 
-    fprintf(file, "edge[color=\"#02e5ca\", fontcolor=\"blue\", fontsize=12];\n");
+    fprintf(file, "edge[color=\"#02e5ca\"];\n");
 
     for(size_t i = 0; i < list -> size; i++)
         fprintf(file, "{ rank = same; \"%llu\"; \"e%llu\";}\n", i, i);
@@ -49,6 +58,10 @@ int generate_file(List *list, FILE *file) {
     write_edges(list, file, list -> head, 0);
 
     write_edges(list, file, list -> free, (int) list -> size);
+
+    fprintf(file, "\"head\" -> \"e%i\";\n", list -> head);
+    fprintf(file, "\"tail\" -> \"e%i\";\n", list -> tail);
+    fprintf(file, "\"free\" -> \"e%i\";\n", list -> free);
 
     fprintf(file, "}\n");
 
@@ -110,7 +123,7 @@ int generate_image(const char *input, const char *output) {
     char cmd[20 + 2 * _MAX_PATH] = "";
 
     sprintf(cmd, "dot %s -o %s -Tpng", input, output);
-    
+
     return system(cmd);
 }
 

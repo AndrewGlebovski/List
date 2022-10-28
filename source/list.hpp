@@ -4,6 +4,20 @@
 */
 
 
+typedef enum {
+    INVALID_ARG  =  1,       ///< Function get invalid argument
+    INVALID_PTR  =  2,       ///< Function get invalid pointer
+    NULL_BUFFER  =  3,       ///< List has null buffer
+    INV_NEXT_ID  =  4,       ///< Element next index is wrong
+    INV_PREV_ID  =  5,       ///< Element previous index is wrong
+    ITER_FAIL    =  6,       ///< Logical list iteration end before tail
+    RECURSIVE_ID =  7,       ///< Infinite iteration
+    ALLOC_FAIL   =  8,       ///< Failed to allocate memory
+    REALLOC_FAIL =  9,       ///< Failed to reallocate memory
+    INV_FREE     = 10,       ///< Free element has prev = -1
+} ERROR_CODES;
+
+
 /// Contains all information about element
 typedef struct {
     int data = 0;           ///< element value

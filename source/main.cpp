@@ -11,12 +11,19 @@ int main() {
 
     construct(&list, 16);
 
-    verifier(&list);
-
     FILE *file = fopen(DUMP_DIR"graph.txt", "w");
 
     for(int i = 0; i < 12; i++)
         insert(&list, i, i + 2);
+
+    insert(&list, 0, 50);
+    insert(&list, 12, 150);
+    insert(&list, 5, 100);
+    remove(&list, 5);
+    remove(&list, 8);
+    remove(&list, 9);
+
+    verifier(&list);
 
     generate_file(&list, file);
 

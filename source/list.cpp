@@ -10,20 +10,20 @@
 
 
 /// Returns 1 and prints message on condition fail
-#define ASSERT(condition, message)      \
-if (!(condition)) {                     \
-    printf("%s\n", message);            \
-    return 1;                           \
+#define ASSERT(condition, message, error)                                                           \
+if (!(condition)) {                                                                                 \
+    printf("%s(%i) in %s\n[%i] %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, error, message);     \
+    return error;                                                                                   \
 }
 
 
 int construct(List *list, int size) {
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(size > 0, "Invalid list size!");
+    ASSERT(list, "Invalid list pointer!", INVALID_ARG);
+    ASSERT(size > 0, "Invalid list size!", INVALID_ARG);
 
     list -> buffer = (Node *) calloc(size, sizeof(Node));
 
-    ASSERT(list -> buffer, "Failed to allocate list buffer!");
+    ASSERT(list -> buffer, "Failed to allocate list buffer!", ALLOC_FAIL);
 
     list -> size = size;
 
@@ -39,13 +39,13 @@ int construct(List *list, int size) {
 
 
 int resize(List *list, int new_size) {
-    ASSERT(list, "Invalid list pointer!");
-    ASSERT(new_size > 0, "Invalid list size!");
-    ASSERT(list -> buffer, "Invalid list buffer!");
+    ASSERT(list, "Invalid list pointer!", INVALID_ARG);
+    ASSERT(new_size > 0, "Invalid list size!", INVALID_ARG);
+    ASSERT(list -> buffer, "Invalid list buffer!", NULL_BUFFER);
 
     list -> buffer = (Node *) realloc(list -> buffer, new_size * sizeof(Node));
 
-    ASSERT(list -> buffer, "Failed to reallocate list buffer!");
+    ASSERT(list -> buffer, "Failed to reallocate list buffer!", REALLOC_FAIL);
 
     for(int i = list -> size; i < new_size; i++)
         list -> buffer[i] = {0xBEEF, i + 1, -1};
@@ -57,9 +57,9 @@ int resize(List *list, int new_size) {
 
 
 int insert(List *list, int index, int value) {
-    ASSERT(!verifier(list), "Can't insert element to invalid list");
-    ASSERT(index > -1 && index < list -> size, "Wrong index given!");
-    ASSERT(list -> buffer[index].prev != -1, "Wrong index given!");
+    ASSERT(!verifier(list), "Can't insert element to verification fail", INVALID_ARG);
+    ASSERT(index > -1 && index < list -> size, "Wrong index given!", INVALID_ARG);
+    ASSERT(list -> buffer[index].prev != -1, "Insert after not existing element!", INVALID_ARG);
 
     int real_index = list -> free;
 
@@ -76,9 +76,9 @@ int insert(List *list, int index, int value) {
 
 
 int remove(List *list, int index) {
-    ASSERT(!verifier(list), "Can't remove element due to invalid list");
-    ASSERT(index > -1 && index < list -> size, "Wrong index given!");
-    ASSERT(list -> buffer[index].prev == -1, "Wrong index given!");
+    ASSERT(!verifier(list), "Can't remove element due to verification fail", INVALID_ARG);
+    ASSERT(index > -1 && index < list -> size, "Wrong index given!", INVALID_ARG);
+    ASSERT(list -> buffer[index].prev != -1, "Remove already free element!", INVALID_ARG);
 
     int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
     list -> buffer[prev].next = next;
@@ -94,7 +94,7 @@ int remove(List *list, int index) {
 
 
 int destruct(List *list) {
-    ASSERT(!verifier(list), "Can't destruct list due to invalid list");
+    ASSERT(!verifier(list), "Can't destruct list due to verification fail", INVALID_ARG);
 
     free(list -> buffer);
     list -> buffer = nullptr;
@@ -106,7 +106,7 @@ int destruct(List *list) {
 
 
 int dump(List *list) {
-    ASSERT(!verifier(list), "Can't dump list due to invalid list");
+    ASSERT(!verifier(list), "Can't dump list due to verification fail", INVALID_ARG);
 
     printf("free - %i\n", list -> free);
 
@@ -132,35 +132,37 @@ int dump(List *list) {
 
 
 int verifier(List *list) {
-    ASSERT(list, "Invalid list pointer!");
+    ASSERT(list, "Invalid list pointer!", INVALID_ARG);
 
-    ASSERT(list -> buffer, "List has invalid buffer!");
+    ASSERT(list -> buffer, "List has invalid buffer!", NULL_BUFFER);
 
     int id = 0, count = 0;
 
     for(int i = list -> buffer[0].next; i != 0 && count <= list -> size; i = list -> buffer[i].next, count++) {
-        ASSERT(list -> buffer[list -> buffer[i].prev].next == i, "Wrong prev index!");
-        ASSERT(list -> buffer[list -> buffer[i].next].prev == i, "Wrong next index!");
+        ASSERT(list -> buffer[list -> buffer[i].prev].next == i, "Wrong prev index!", INV_NEXT_ID);
+        ASSERT(list -> buffer[list -> buffer[i].next].prev == i, "Wrong next index!", INV_PREV_ID);
         
         id = i;
     }
 
-    ASSERT(id == list -> buffer[0].prev, "Iteration ended before head was reached!");
+    ASSERT(id == list -> buffer[0].prev, "Iteration ended before head was reached!", ITER_FAIL);
 
-    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!");
+    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
 
-    for(int i = list -> free; i != list -> size; i = list -> buffer[i].next) {
-        ASSERT(i != 0, "Zero index in free element found!");
+    count = 0;
 
-        ASSERT(list -> buffer[i].prev == -1, "Free element prev index is not -1!");
+    for(int i = list -> free; i != list -> size && count <= list -> size; i = list -> buffer[i].next, count++) {
+        ASSERT(list -> buffer[i].prev == -1, "Free element prev index is not -1!", INV_FREE);
     }
+
+    ASSERT(count <= list -> size, "List iterates more than its size! Possible recursion!", RECURSIVE_ID);
 
     return 0;
 }
 
 
 int linearization(List *list) {
-    ASSERT(!verifier(list), "Can't linearize list due to invalid list");
+    ASSERT(!verifier(list), "Can't linearize list due to verification fail", INVALID_ARG);
 
     Node *linear_buffer = (Node *) calloc(list -> size, sizeof(Node));
 
@@ -189,7 +191,7 @@ int linearization(List *list) {
 
 
 int real_index(List *list, int logical_index) {
-    ASSERT(!verifier, "Can't get real index due to invalid list");
+    ASSERT(!verifier, "Can't get real index due to verification fail", INVALID_ARG);
 
     if (logical_index == 0) {
         return 0;

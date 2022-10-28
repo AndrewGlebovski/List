@@ -15,10 +15,8 @@ typedef struct {
 /// Ultimate data structure
 typedef struct {
     Node *buffer = nullptr;         ///< Array of nodes
-    int head = 0;                   ///< Logical first element 
-    int tail = 0;                   ///< Logical last element
     int free = 0;                   ///< First empty node index
-    size_t size = 0;                ///< List size
+    int size = 0;                   ///< List size
     int linear = 1;                 ///< Non zero value means that list is sorted (linearized)
 } List;
 
@@ -29,7 +27,7 @@ typedef struct {
  * \param [in]  size Specifies buffer size
  * \return Non zero value means error
 */
-int construct(List *list, size_t size);
+int construct(List *list, int size);
 
 
 /**
@@ -38,7 +36,7 @@ int construct(List *list, size_t size);
  * \param [in]  new_size Specifies buffer new size
  * \return Non zero value means error
 */
-int resize(List *list, size_t new_size);
+int resize(List *list, int new_size);
 
 
 /**

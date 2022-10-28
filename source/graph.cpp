@@ -14,7 +14,7 @@ void write_records(List *list, FILE *file, int from, int to);
 
 
 /// Writes index ranks
-void write_ranks(FILE *file, size_t count);
+void write_ranks(FILE *file, int count);
 
 
 /// Writes edge connecting Nodes 
@@ -37,31 +37,31 @@ int generate_file(List *list, FILE *file) {
 
     fprintf(file, "{\n");
     fprintf(file, "    node[color=\"#355250\", fontcolor=\"#355250\", fontsize=14, shape=\"invhouse\", style=\"filled\", fillcolor=\"#daf9f4\"];\n");
-    fprintf(file, "    \"head\";\n");
-    fprintf(file, "    \"tail\";\n");
-    fprintf(file, "    \"free\";\n");
-    fprintf(file, "    \"e0\";\n");
-    fprintf(file, "    \"e%llu\";\n", list -> size);
+    fprintf(file, "    \"Free\";\n");
+    fprintf(file, "    \"Head\";\n");
+    fprintf(file, "    \"Tail\";\n");
+    fprintf(file, "    \"e%i\"[label = \"Size = 16\"];\n", list -> size);
     fprintf(file, "}\n");
 
-    write_records(list, file, list -> head, 0);
+    write_records(list, file, list -> buffer[0].next, 0);
+    write_records(list, file, 0, list -> buffer[0].next);
 
-    write_records(list, file, list -> free, (int) list -> size);
+    write_records(list, file, list -> free, list -> size);
 
     write_hidden_edges(list, file);
 
     fprintf(file, "edge[color=\"#02e5ca\"];\n");
 
-    for(size_t i = 0; i < list -> size; i++)
-        fprintf(file, "{ rank = same; \"%llu\"; \"e%llu\";}\n", i, i);
+    for(int i = 0; i < list -> size; i++)
+        fprintf(file, "{ rank = same; \"%i\"; \"e%i\";}\n", i, i);
 
-    write_edges(list, file, list -> head, 0);
+    write_edges(list, file, list -> buffer[0].next, 0);
 
-    write_edges(list, file, list -> free, (int) list -> size);
+    write_edges(list, file, list -> free, list -> size);
 
-    fprintf(file, "\"head\" -> \"e%i\";\n", list -> head);
-    fprintf(file, "\"tail\" -> \"e%i\";\n", list -> tail);
-    fprintf(file, "\"free\" -> \"e%i\";\n", list -> free);
+    fprintf(file, "\"Head\" -> \"e%i\";\n", list -> buffer[0].next);
+    fprintf(file, "\"Tail\" -> \"e%i\";\n", list -> buffer[0].prev);
+    fprintf(file, "\"Free\" -> \"e%i\";\n", list -> free);
 
     fprintf(file, "}\n");
 
@@ -69,17 +69,17 @@ int generate_file(List *list, FILE *file) {
 }
 
 
-void write_ranks(FILE *file, size_t count) {
+void write_ranks(FILE *file, int count) {
     fprintf(file, "{\n");
     fprintf(file, "    node[shape=plaintext, fontcolor=white];\n");
     fprintf(file, "    edge[color=white]\n");
 
     fprintf(file, "    ");
 
-    for(size_t i = 0; i < count - 1; i++)
-        fprintf(file, "\"%llu\" -> ", i);
+    for(int i = 0; i < count - 1; i++)
+        fprintf(file, "\"%i\" -> ", i);
     
-    fprintf(file, "\"%llu\";\n", count - 1);
+    fprintf(file, "\"%i\";\n", count - 1);
 
     fprintf(file, "}\n");
 }
@@ -112,8 +112,8 @@ void write_hidden_edges(List *list, FILE *file) {
 
     fprintf(file, "    edge[color=white, weight = 1000];\n");
 
-    for(size_t i = 0; i < list -> size - 1; i++)
-        fprintf(file, "    \"e%llu\" -> \"e%llu\";\n", i, i + 1);
+    for(int i = 0; i < list -> size - 1; i++)
+        fprintf(file, "    \"e%i\" -> \"e%i\";\n", i, i + 1);
     
     fprintf(file, "}\n");
 }

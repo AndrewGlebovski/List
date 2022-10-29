@@ -1,10 +1,7 @@
 #include <stdio.h>
-#include "log.hpp"
 #include "list.hpp"
 #include "graph.hpp"
-
-
-#define DUMP_DIR "dump/"
+#include "log.hpp"
 
 
 int main() {
@@ -16,18 +13,7 @@ int main() {
 
     FILE *file = nullptr;
 
-    // DUMPING 1
-
-    file = fopen(DUMP_DIR"graph1.txt", "w");
-
-    generate_file(&list, file);
-
-    fclose(file);
-
-    generate_image("dump/graph1.txt", "dump/graph1.png");
-
-    DUMP(&list, "graph1.png", fprintf(LOG_FILE, "Dumping 1"));
-
+    DUMP_IT(&list, fprintf(LOG_FILE, "Constructor result"));
 
     for(int i = 0; i < 12; i++)
         push_back(&list, i + 2);
@@ -41,18 +27,7 @@ int main() {
 
     linearization(&list);
 
-    // DUMPING 2
-
-    file = fopen(DUMP_DIR"graph2.txt", "w");
-
-    generate_file(&list, file);
-
-    fclose(file);
-
-    generate_image("dump/graph2.txt", "dump/graph2.png");
-
-    DUMP(&list, "graph2.png", fprintf(LOG_FILE, "Dumping 2"));
-
+    DUMP_IT(&list, fprintf(LOG_FILE, "Linearization result"));
 
     close_log();
 

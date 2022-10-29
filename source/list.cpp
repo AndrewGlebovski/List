@@ -182,6 +182,7 @@ int dump(List *list, FILE *output) {
         fprintf(output, "%-8i ", list -> buffer[i].prev);
     fputc('\n', output);
     */
+
     return 0;
 }
 

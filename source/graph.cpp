@@ -44,7 +44,12 @@ int generate_file(List *list, FILE *file) {
     fprintf(file, "}\n");
 
     write_records(list, file, list -> buffer[0].next, 0, "daf9f4");
-    write_records(list, file, 0, list -> buffer[0].next, "daf9f4");
+
+    if (list -> buffer[0].next != 0)
+        write_records(list, file, 0, list -> buffer[0].next, "daf9f4");
+    else
+        fprintf(file, "e0[shape=record, color=\"#355250\", fontsize=14, fontcolor=\"#355250\", \
+            style=\"filled\", fillcolor=\"#daf9f4\", label=\"<index> 0 | %i |  {<prev> 0 | <next> 0}\"];\n", list -> buffer[0].data);
 
     write_records(list, file, list -> free, list -> size, "02e5ca");
 

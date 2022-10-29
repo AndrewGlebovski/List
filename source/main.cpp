@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "log.hpp"
 #include "list.hpp"
 #include "graph.hpp"
 
@@ -7,13 +8,26 @@
 
 
 int main() {
+    open_log("dump/log.html");
+
     List list = {};
 
     construct(&list, 16);
 
-    construct(nullptr, 16);
+    FILE *file = nullptr;
 
-    FILE *file = fopen(DUMP_DIR"graph.txt", "w");
+    // DUMPING 1
+
+    file = fopen(DUMP_DIR"graph1.txt", "w");
+
+    generate_file(&list, file);
+
+    fclose(file);
+
+    generate_image("dump/graph1.txt", "dump/graph1.png");
+
+    DUMP(&list, "graph1.png", fprintf(LOG_FILE, "Dumping 1"));
+
 
     for(int i = 0; i < 12; i++)
         push_back(&list, i + 2);
@@ -27,15 +41,20 @@ int main() {
 
     linearization(&list);
 
-    verifier(&list);
+    // DUMPING 2
+
+    file = fopen(DUMP_DIR"graph2.txt", "w");
 
     generate_file(&list, file);
 
     fclose(file);
 
-    generate_image("dump/graph.txt", "dump/graph.png");
+    generate_image("dump/graph2.txt", "dump/graph2.png");
 
-    dump(&list, stdout);
+    DUMP(&list, "graph2.png", fprintf(LOG_FILE, "Dumping 2"));
+
+
+    close_log();
 
     destruct(&list);
 

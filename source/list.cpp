@@ -13,7 +13,7 @@
 #define ASSERT(condition, message, error, ...)                                                      \
 if (!(condition)) {                                                                                 \
     printf("%s(%i) in %s\n[%i] %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__, error, message);     \
-    dump(list, stdout);                                                                                     \
+    dump(list, stdout);                                                                             \
     __VA_ARGS__;                                                                                    \
     return error;                                                                                   \
 }
@@ -29,7 +29,7 @@ if (!(condition)) {                                                             
 /// Dumps information about list
 #define DUMP(list, ...)                                                             \
 printf("%s(%i) in %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__);                  \
-dump(list, stdout);                                                                         \
+dump(list, stdout);                                                                 \
 __VA_ARGS__;
 
 
@@ -180,7 +180,7 @@ int dump(List *list, FILE *output) {
     fprintf(output, "\nprev  ");
     for(int i = 0; i < list -> size; i++)
         fprintf(output, "%-8i ", list -> buffer[i].prev);
-    putchar('\n');
+    fputc('\n', output);
 
     return 0;
 }

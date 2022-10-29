@@ -15,10 +15,10 @@ all: run
 
 
 # Завершает сборку
-run: $(addprefix $(BIN_DIR)/, main.o list.o graph.o)
+run: $(addprefix $(BIN_DIR)/, main.o list.o graph.o log.o)
 	$(COMPILER) $^ -o run.exe
 
 
 # Предварительная сборка
-$(BIN_DIR)/%.o: $(addprefix $(SRC_DIR)/, %.cpp list.hpp graph.hpp)
+$(BIN_DIR)/%.o: $(addprefix $(SRC_DIR)/, %.cpp list.hpp graph.hpp log.hpp)
 	$(COMPILER) $(FLAGS) -c $< -o $@

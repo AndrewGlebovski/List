@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.hpp"
+#include "graph.hpp"
+#include "log.hpp"
 
 
 
@@ -52,6 +54,8 @@ int construct(List *list, int size) {
 
     ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
 
+    DUMP_IT(list, fprintf(LOG_FILE, "Consructor, size = %i", size));
+
     return 0;
 }
 
@@ -71,6 +75,8 @@ int resize(List *list, int new_size) {
     list -> size = new_size;
 
     ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
+    DUMP_IT(list, fprintf(LOG_FILE, "Resize, size = %i", new_size));
 
     return 0;
 }
@@ -92,6 +98,8 @@ int insert(List *list, int index, int value) {
     list -> linear = 0;
 
     ASSERT(!verifier(list), "Second verification return error", -SECOND_CHECK);
+
+    DUMP_IT(list, fprintf(LOG_FILE, "Insert %i after %i", value, index));
 
     return real_index;
 }
@@ -122,6 +130,8 @@ int remove(List *list, int index) {
     list -> free = index;
 
     ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
+    DUMP_IT(list, fprintf(LOG_FILE, "Remove %i", index));
 
     return 0;
 }
@@ -243,6 +253,8 @@ int linearization(List *list) {
     list -> linear = 1;
 
     ASSERT(!verifier(list), "Second verification return error", SECOND_CHECK);
+
+    DUMP_IT(list, fprintf(LOG_FILE, "Linearization"));
 
     return 0;
 }

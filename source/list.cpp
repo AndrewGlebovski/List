@@ -156,32 +156,32 @@ int dump(List *list, FILE *output) {
 
     fprintf(output, "List [%p]\n", list);
 
-    fprintf(output, "buffer [%p]:\n", list -> buffer);
-    fprintf(output, "size - %i\n", list -> size);
-
+    fprintf(output, "%4s%-8s = %i\n", "", "size", list -> size);
+    fprintf(output, "%4sbuffer [%p]:\n\n", "", list -> buffer);
+    /*
     if (error) return INVALID_ARG;
 
-    fprintf(output, "head - %i\n", list -> buffer[0].next);
-    fprintf(output, "tail - %i\n", list -> buffer[0].prev);
-    fprintf(output, "free - %i\n", list -> free);
+    fprintf(output, "%4s%-8s = %i\n", "", "head", list -> buffer[0].next);
+    fprintf(output, "%4s%-8s = %i\n", "", "tail", list -> buffer[0].prev);
+    fprintf(output, "%4s%-8s = %i\n", "", "free", list -> free);
 
-    fprintf(output, "id    ");
+    fprintf(output, "\n%4s%-4s%4s", "", "id", "");
     for(int i = 0; i < list -> size; i++)
         fprintf(output, "%-8i ", i);
     
-    fprintf(output, "\ndata  ");
+    fprintf(output, "\n%4s%-4s%4s", "", "data", "");
     for(int i = 0; i < list -> size; i++)
         fprintf(output, "%-8i ", list -> buffer[i].data);
     
-    fprintf(output, "\nnext  ");
+    fprintf(output, "\n%4s%-4s%4s", "", "next", "");
     for(int i = 0; i < list -> size; i++)
         fprintf(output, "%-8i ", list -> buffer[i].next);
     
-    fprintf(output, "\nprev  ");
+    fprintf(output, "\n%4s%-4s%4s", "", "prev", "");
     for(int i = 0; i < list -> size; i++)
         fprintf(output, "%-8i ", list -> buffer[i].prev);
     fputc('\n', output);
-
+    */
     return 0;
 }
 

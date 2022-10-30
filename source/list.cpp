@@ -142,7 +142,7 @@ int pop_front(List *list) {
 }
 
 
-int pop_back(List *list, int value) {
+int pop_back(List *list) {
     return remove(list, list -> buffer[0].prev);
 }
 

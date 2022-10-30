@@ -147,4 +147,4 @@ int pop_front(List *list);
  * \param [out] list Allocated list
  * \return Non zero value means error
 */
-int pop_back(List *list, int value);
+int pop_back(List *list);

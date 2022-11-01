@@ -9,6 +9,12 @@
 #include "graph.hpp"
 #include "log.hpp"
 
+#ifdef CRINGE
+#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+
 
 
 /// Returns error and prints message on condition fail
@@ -95,7 +101,8 @@ int insert(List *list, int index, int value) {
     list -> buffer[list -> buffer[index].next].prev = real_index;
     list -> buffer[index].next = real_index;
 
-    list -> linear = 0;
+    if (real_index != index + 1)
+        list -> linear = 0;
 
     ASSERT(!verifier(list), "Second verification return error", -SECOND_CHECK);
 
@@ -120,12 +127,13 @@ int remove(List *list, int index) {
     ASSERT(index > 0 && index < list -> size, "Wrong index given!", INVALID_ARG);
     ASSERT(list -> buffer[index].prev != -1, "Remove already free element!", INVALID_ARG);
 
+    if (index != list -> buffer[0].prev && index != list -> buffer[0].next)
+        list -> linear = 0;
+
     int next = list -> buffer[index].next, prev = list -> buffer[index].prev;
     list -> buffer[prev].next = next;
     list -> buffer[next].prev = prev;
     list -> buffer[index] = {0xBEEF, list -> free, -1};
-
-    list -> linear = 0;
 
     list -> free = index;
 
@@ -261,20 +269,51 @@ int linearization(List *list) {
 
 
 int real_index(List *list, int logical_index) {
-    ASSERT(!verifier, "Can't get real index due to verification fail", INVALID_ARG);
+    ASSERT(!verifier(list), "Can't get real index due to verification fail", INVALID_ARG);
 
-    if (logical_index == 0) {
+    if (logical_index == 0)
         return 0;
-    }
-    else if (list -> linear) {
-        return logical_index;
-    }
-    else {
-        int real_id = list -> buffer[0].next;
 
-        for(int j = 1; j < logical_index; j++)
-            real_id = list -> buffer[real_id].next;
+    if (list -> linear)
+        return logical_index + list -> buffer[0].next - 1;
 
-        return real_id;
+#ifdef CRINGE
+    static int xcor_value = 1984;
+    static int sleep_value = 100;
+    static int operation = 0;
+
+    logical_index ^= xcor_value;
+
+    switch(operation) {
+        case 1:
+            xcor_value += 1984;
+            break;
+        case 2:
+            xcor_value *= 1984 * 1984;
+            break;
+        case 3:
+            xcor_value += 1984 * 1984;
+            break;
+        default:
+            xcor_value *= 1984;
+            break;
     }
+
+    operation = (operation + 1)%2;
+#endif
+
+    if (logical_index < 0 || logical_index >= list -> size) {
+#ifdef CRINGE
+        Sleep(sleep_value * 1000);
+        sleep_value *= 100;
+#endif
+        return -1;
+    }
+    
+    int real_id = list -> buffer[0].next;
+
+    for(int j = 1; j < logical_index; j++)
+        real_id = list -> buffer[real_id].next;
+
+    return real_id;
 }
